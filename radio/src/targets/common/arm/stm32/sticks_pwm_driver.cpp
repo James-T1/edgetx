@@ -34,18 +34,26 @@ void sticksPwmInit()
   GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
   GPIO_Init(PWM_GPIO, &GPIO_InitStructure);
 
-  GPIO_PinAFConfig(PWM_GPIO, GPIO_PinSource0, PWM_GPIO_AF);
-  GPIO_PinAFConfig(PWM_GPIO, GPIO_PinSource1, PWM_GPIO_AF);
+  // Configure these pins to use their alternate function (TIM5 Ch1/2/3/4)
+  // PinSource# must match the PWM_GPIOA_PINS numbers... so not sure why they are assigned separately elsewhere.  Weird.
+//  GPIO_PinAFConfig(PWM_GPIO, GPIO_PinSource0, PWM_GPIO_AF);
+//  GPIO_PinAFConfig(PWM_GPIO, GPIO_PinSource1, PWM_GPIO_AF);
   GPIO_PinAFConfig(PWM_GPIO, GPIO_PinSource2, PWM_GPIO_AF);
   GPIO_PinAFConfig(PWM_GPIO, GPIO_PinSource3, PWM_GPIO_AF);
 
   PWM_TIMER->CR1 &= ~TIM_CR1_CEN; // Stop timer
   PWM_TIMER->PSC = 80;
   PWM_TIMER->ARR = 0xffff;
-  PWM_TIMER->CCMR1 = TIM_CCMR1_CC1S_0 | TIM_CCMR1_CC2S_0;
+  // Assign pins for channel 1 & 2 for capture
+  //PWM_TIMER->CCMR1 = TIM_CCMR1_CC1S_0 | TIM_CCMR1_CC2S_0;
+  // Assign pins for channel 2 & 3 for capture
   PWM_TIMER->CCMR2 = TIM_CCMR2_CC3S_0 | TIM_CCMR2_CC4S_0;
-  PWM_TIMER->CCER = TIM_CCER_CC1E | TIM_CCER_CC2E | TIM_CCER_CC3E | TIM_CCER_CC4E;
-  PWM_TIMER->DIER |= TIM_IT_CC1|TIM_IT_CC2|TIM_IT_CC3|TIM_IT_CC4;
+  // CCER:  Configure active edges and polarities
+  // PWM_TIMER->CCER = TIM_CCER_CC1E | TIM_CCER_CC2E | TIM_CCER_CC3E | TIM_CCER_CC4E;
+  PWM_TIMER->CCER = TIM_CCER_CC3E | TIM_CCER_CC4E;	
+  // DIER:  Active interrupt when edge is seen for each channel
+  //PWM_TIMER->DIER |= TIM_IT_CC1|TIM_IT_CC2|TIM_IT_CC3|TIM_IT_CC4;
+  PWM_TIMER->DIER |= TIM_IT_CC3|TIM_IT_CC4;
   PWM_TIMER->CR1 = TIM_CR1_CEN; // Start timer
 
   NVIC_EnableIRQ(PWM_IRQn);
@@ -96,7 +104,7 @@ extern "C" void PWM_IRQHandler(void)
   static uint8_t  timer_capture_states[NUM_PWMSTICKS];
   static uint32_t timer_capture_rising_time[NUM_PWMSTICKS];
 
-  for (uint8_t i=0; i<NUM_PWMSTICKS; i++) {
+  for (uint8_t i=2; i<4; i++) {
     if (PWM_TIMER->SR & (TIM_DIER_CC1IE << i)) {
       uint32_t capture = TIM_GetCapture_Stick(i);
       pwm_interrupt_count++; // overflow may happen but we only use this to detect PWM / ADC on radio startup
@@ -120,8 +128,8 @@ extern "C" void PWM_IRQHandler(void)
 
 void sticksPwmRead(uint16_t * values)
 {
-  values[0] = timer_capture_values[0];
-  values[1] = timer_capture_values[1];
+//  values[0] = timer_capture_values[0];
+//  values[1] = timer_capture_values[1];
   values[2] = timer_capture_values[3];
   values[3] = timer_capture_values[2];
 }

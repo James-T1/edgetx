@@ -25,8 +25,8 @@
 
 // TODO: move this to the targets
 #if NUM_PWMSTICKS > 0
-  #define FIRST_ANALOG_ADC             (STICKS_PWM_ENABLED() ? NUM_PWMSTICKS : 0)
-  #define NUM_ANALOGS_ADC              (STICKS_PWM_ENABLED() ? (NUM_ANALOGS - NUM_PWMSTICKS) : NUM_ANALOGS)
+  #define FIRST_ANALOG_ADC             0
+  #define NUM_ANALOGS_ADC              NUM_ANALOGS
 #elif defined(PCBX9E)
   #define FIRST_ANALOG_ADC             0
   #define NUM_ANALOGS_ADC              11

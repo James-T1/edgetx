@@ -85,8 +85,11 @@ static void adc_setup_scan_mode(ADC_TypeDef* ADCx, uint8_t nconv)
 stm32_hal_adc_channel ADC_MAIN_channels[] = {
     {ADC_CHANNEL_STICK_LH, ADC_SAMPTIME},
     {ADC_CHANNEL_STICK_LV, ADC_SAMPTIME},
-    {ADC_CHANNEL_STICK_RV, ADC_SAMPTIME},
-    {ADC_CHANNEL_STICK_RH, ADC_SAMPTIME},
+    // {ADC_CHANNEL_STICK_RV, ADC_SAMPTIME},
+    // {ADC_CHANNEL_STICK_RH, ADC_SAMPTIME},
+    // fake channels to fill unsused pwm sticks
+    {0, 0},
+    {0, 0},
 #if defined(PCBX10)
     { ADC_CHANNEL_POT1,    ADC_SAMPTIME },
     { ADC_CHANNEL_POT2,    ADC_SAMPTIME },
@@ -139,7 +142,7 @@ static const stm32_hal_adc_channel* ADC_MAIN_get_channels()
 {
 #if (NUM_PWMSTICKS > 0)
   if (STICKS_PWM_ENABLED())
-    return ADC_MAIN_channels + 4;
+    return ADC_MAIN_channels;
 #endif
 #if defined(RADIO_FAMILY_T16) || defined(PCBNV14)
   if (globalData.flyskygimbals)
