@@ -139,7 +139,7 @@ static const stm32_hal_adc_channel* ADC_MAIN_get_channels()
 {
 #if (NUM_PWMSTICKS > 0)
   if (STICKS_PWM_ENABLED())
-    return ADC_MAIN_channels + 4;
+    return ADC_MAIN_channels + 2;
 #endif
 #if defined(RADIO_FAMILY_T16) || defined(PCBNV14)
   if (globalData.flyskygimbals)
