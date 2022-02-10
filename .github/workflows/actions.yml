@@ -30,69 +30,25 @@ on:
   workflow_dispatch:
 
 jobs:
-  test:
-    name: Run tests
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        target:
-          - nv14
-          - t12
-          - t16
-          - t18
-          - t8
-          - tlite
-          - tx12
-          - tx16s
-          - x10
-          - x12s
-          - x7
-          - x9d
-          - x9dp
-          - x9dp2019
-          - x9lite
-          - x9lites
-          - xlite
-          - xlites
-    container:
-      image: ghcr.io/edgetx/edgetx-dev:latest
-      volumes:
-        - ${{ github.workspace }}:/src
-    steps:
-      - name: Check out the repo
-        uses: actions/checkout@v2
-        with:
-          submodules: recursive
-          # fetch-depth: 0 # https://github.com/actions/checkout#Fetch-all-history-for-all-tags-and-branches
-
-      - name: Test ${{ matrix.target }}
-        env:
-          FLAVOR: ${{ matrix.target }}
-        run: |
-          echo "Running commit tests"
-          ./tools/commit-tests.sh
-
-
   build:
     name: Run builds
-    needs: test
     runs-on: ubuntu-latest
     strategy:
       matrix:
         target:
-          - nv14
-          - t12
-          - t16
-          - t18
-          - t8;zorro
-          - tlite;tpro
-          - tx12
-          - tx16s
-          - x10;x10-access
-          - x12s
-          - x7;x7-access
-          - x9d;x9dp;x9dp2019
-          - x9lite;x9lites
+#          - nv14
+#          - t12
+#          - t16
+#          - t18
+#          - t8;zorro
+#          - tlite;tpro
+#          - tx12
+#          - tx16s
+#          - x10;x10-access
+#          - x12s
+#          - x7;x7-access
+#          - x9d;x9dp;x9dp2019
+#          - x9lite;x9lites
           - xlite;xlites
     container:
       image: ghcr.io/edgetx/edgetx-dev:latest
